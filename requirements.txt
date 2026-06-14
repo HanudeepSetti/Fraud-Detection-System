@@ -1,7 +1,7 @@
 streamlit
-pandas
-numpy
-scikit-learn
-joblib
-xgboost
-imbalanced-learn
+sklearn: 1.6.1
+xgboost: 3.2.0
+imblearn: 0.14.2
+joblib: 1.5.3
+pandas: 2.2.2
+numpy: 2.0.2
