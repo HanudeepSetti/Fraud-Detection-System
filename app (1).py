@@ -7,95 +7,91 @@ Original file is located at
     https://colab.research.google.com/drive/1HDqy5P6UkXeofsFzkVsXVVsPbHK0OWhJ
 """
 
-pip install streamlit joblib
+import streamlit as st
+import pandas as pd
+import numpy as np
+import joblib
 
-# Commented out IPython magic to ensure Python compatibility.
-# %%writefile app.py
-# import streamlit as st
-# import pandas as pd
-# import numpy as np
-# import joblib
-# 
-# st.set_page_config(page_title="JP Morgan Fraud Detector", layout="wide")
-# st.title("🏦 JP Morgan Fraud Detection")
-# st.write("Enter transaction details to check whether it is likely fraudulent.")
-# 
-# MODEL_PATH = "fraud_model.pk2"
-# 
-# 
-# @st.cache_resource
-# def load_model():
-#     return joblib.load(MODEL_PATH)
-# 
-# 
-# model = load_model()
-# 
-# # ── SIDEBAR INPUTS ────────────────────────────────────────────────────────────
-# st.sidebar.header("Enter Transaction Details")
-# 
-# transaction_amount = st.sidebar.number_input("Transaction Amount", min_value=0.0, value=5000.0)
-# account_balance    = st.sidebar.number_input("Account Balance", min_value=0.0, value=50000.0)
-# risk_score = st.sidebar.slider("Risk Score", min_value=0.0, max_value=1.0, value=0.5, step=0.01)
-# credit_rating      = st.sidebar.slider("Credit Rating", min_value=100, max_value=1000, value=500)
-# tenure_months      = st.sidebar.number_input("Tenure Months", min_value=0, value=24)
-# 
-# account_type     = st.sidebar.selectbox("Account Type", ["Current", "Credit", "Savings", "Loan"])
-# transaction_type = st.sidebar.selectbox("Transaction Type", ["Transfer", "Deposit", "Withdrawal", "Payment"])
-# region           = st.sidebar.selectbox("Region", ["Central", "East", "North", "South", "West"])
-# manager          = st.sidebar.selectbox("Manager", ["Manager 1", "Manager 2", "Manager 3", "Manager 4"])
-# product          = st.sidebar.selectbox("Product", ["Personal Loan", "Mutual Fund", "Home Loan", "Savings Account", "Credit Card"])
-# firm             = st.sidebar.selectbox("Firm", ["Firm A", "Firm B", "Firm C", "Firm D", "Firm E"])
-# 
-# transaction_year  = st.sidebar.number_input("Transaction Year", min_value=2000, max_value=2100, value=2026)
-# transaction_month = st.sidebar.slider("Transaction Month", min_value=1, max_value=12, value=6)
-# 
-# # ── PREDICTION ─────────────────────────────────────────────────────────────
-# if st.sidebar.button("Check for Fraud", type="primary"):
-# 
-#     try:
-#         # Derived values (must mirror the feature engineering used in training)
-#         total_credit    = float(transaction_amount) if transaction_type == "Deposit" else 0.0
-#         total_debit     = float(transaction_amount) if transaction_type in ["Withdrawal", "Payment"] else 0.0
-#         net_transaction = total_credit - total_debit
-# 
-#         input_data = pd.DataFrame([{
-#             "AccountType":       str(account_type),
-#             "TransactionType":   str(transaction_type),
-#             "Product":           str(product),
-#             "Firm":              str(firm),
-#             "Region":            str(region),
-#             "Manager":           str(manager),
-#             "TransactionAmount": np.float64(transaction_amount),
-#             "AccountBalance":    np.float64(account_balance),
-#             "RiskScore":         np.float64(risk_score),
-#             "CreditRating":      np.int64(credit_rating),
-#             "TenureMonths":      np.int64(tenure_months),
-#             "Year":              np.int32(transaction_year),
-#             "Month":             np.int32(transaction_month),
-#             "total_credit":      np.float64(total_credit),
-#             "total_debit":       np.float64(total_debit),
-#             "Net_transaction":   np.float64(net_transaction),
-#         }])
-# 
-#         prediction  = model.predict(input_data)[0]
-#         probability = model.predict_proba(input_data)[0][1]
-# 
-#         col1, col2 = st.columns(2)
-#         with col1:
-#             if prediction == 1:
-#                 st.error("🚨 FRAUD DETECTED")
-#             else:
-#                 st.success("✅ Transaction Looks Legitimate")
-#         with col2:
-#             st.metric("Fraud Probability", f"{probability:.2%}")
-# 
-#         st.progress(float(probability))
-# 
-#         st.subheader("Input Summary")
-#         st.dataframe(input_data)
-# 
-#     except Exception as e:
-#         st.error(f"Prediction failed: {e}")
-#         if "input_data" in dir():
-#             st.write("**Columns:**", list(input_data.columns))
-#             st.write("**Dtypes:**", input_data.dtypes.to_dict())
+st.set_page_config(page_title="JP Morgan Fraud Detector", layout="wide")
+st.title("🏦 JP Morgan Fraud Detection")
+st.write("Enter transaction details to check whether it is likely fraudulent.")
+
+MODEL_PATH = "fraud_model.pk2"
+
+
+@st.cache_resource
+def load_model():
+    return joblib.load(MODEL_PATH)
+
+
+model = load_model()
+
+# ── SIDEBAR INPUTS ────────────────────────────────────────────────────────────
+st.sidebar.header("Enter Transaction Details")
+
+transaction_amount = st.sidebar.number_input("Transaction Amount", min_value=0.0, value=5000.0)
+account_balance    = st.sidebar.number_input("Account Balance", min_value=0.0, value=50000.0)
+risk_score = st.sidebar.slider("Risk Score", min_value=0.0, max_value=1.0, value=0.5, step=0.01)
+credit_rating      = st.sidebar.slider("Credit Rating", min_value=100, max_value=1000, value=500)
+tenure_months      = st.sidebar.number_input("Tenure Months", min_value=0, value=24)
+
+account_type     = st.sidebar.selectbox("Account Type", ["Current", "Credit", "Savings", "Loan"])
+transaction_type = st.sidebar.selectbox("Transaction Type", ["Transfer", "Deposit", "Withdrawal", "Payment"])
+region           = st.sidebar.selectbox("Region", ["Central", "East", "North", "South", "West"])
+manager          = st.sidebar.selectbox("Manager", ["Manager 1", "Manager 2", "Manager 3", "Manager 4"])
+product          = st.sidebar.selectbox("Product", ["Personal Loan", "Mutual Fund", "Home Loan", "Savings Account", "Credit Card"])
+firm             = st.sidebar.selectbox("Firm", ["Firm A", "Firm B", "Firm C", "Firm D", "Firm E"])
+
+transaction_year  = st.sidebar.number_input("Transaction Year", min_value=2000, max_value=2100, value=2026)
+transaction_month = st.sidebar.slider("Transaction Month", min_value=1, max_value=12, value=6)
+
+# ── PREDICTION ─────────────────────────────────────────────────────────────
+if st.sidebar.button("Check for Fraud", type="primary"):
+
+    try:
+        # Derived values (must mirror the feature engineering used in training)
+        total_credit    = float(transaction_amount) if transaction_type == "Deposit" else 0.0
+        total_debit     = float(transaction_amount) if transaction_type in ["Withdrawal", "Payment"] else 0.0
+        net_transaction = total_credit - total_debit
+
+        input_data = pd.DataFrame([{
+            "AccountType":       str(account_type),
+            "TransactionType":   str(transaction_type),
+            "Product":           str(product),
+            "Firm":              str(firm),
+            "Region":            str(region),
+            "Manager":           str(manager),
+            "TransactionAmount": np.float64(transaction_amount),
+            "AccountBalance":    np.float64(account_balance),
+            "RiskScore":         np.float64(risk_score),
+            "CreditRating":      np.int64(credit_rating),
+            "TenureMonths":      np.int64(tenure_months),
+            "Year":              np.int32(transaction_year),
+            "Month":             np.int32(transaction_month),
+            "total_credit":      np.float64(total_credit),
+            "total_debit":       np.float64(total_debit),
+            "Net_transaction":   np.float64(net_transaction),
+        }])
+
+        prediction  = model.predict(input_data)[0]
+        probability = model.predict_proba(input_data)[0][1]
+
+        col1, col2 = st.columns(2)
+        with col1:
+            if prediction == 1:
+                st.error("🚨 FRAUD DETECTED")
+            else:
+                st.success("✅ Transaction Looks Legitimate")
+        with col2:
+            st.metric("Fraud Probability", f"{probability:.2%}")
+
+        st.progress(float(probability))
+
+        st.subheader("Input Summary")
+        st.dataframe(input_data)
+
+    except Exception as e:
+        st.error(f"Prediction failed: {e}")
+        if "input_data" in dir():
+            st.write("**Columns:**", list(input_data.columns))
+            st.write("**Dtypes:**", input_data.dtypes.to_dict())
